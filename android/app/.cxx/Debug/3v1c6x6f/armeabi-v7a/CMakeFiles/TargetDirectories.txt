@@ -1,0 +1,2 @@
+C:/Users/xacar/Desktop/Projetos/Flutter/Buscador_de_gif_Flutter/android/app/.cxx/Debug/3v1c6x6f/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/xacar/Desktop/Projetos/Flutter/Buscador_de_gif_Flutter/android/app/.cxx/Debug/3v1c6x6f/armeabi-v7a/CMakeFiles/rebuild_cache.dir

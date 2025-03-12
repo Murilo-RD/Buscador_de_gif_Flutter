@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,16 +48,18 @@ class _BuscardorPageState extends State<BuscardorPage> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 16,),
+          SizedBox(height: 24,),
           TextField(
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.white,height: 2.5),
             decoration: InputDecoration(
                 labelText: 'Pesquise aqui.',
-                labelStyle: TextStyle(color: Colors.white),
+                labelStyle: TextStyle(color: Colors.white,fontSize: 25),
                 focusedBorder:OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white))
+                border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)
+
+                )
             ),
-          )
+          ),
         ],
       ),
     );
