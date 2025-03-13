@@ -16,6 +16,13 @@ class _BuscardorPageState extends State<BuscardorPage> {
   String? _search;
   int _offset = 0;
 
+
+  int _getCount(List data){
+    if(_search==null){
+      return data.length;
+    }else return data.length+1;
+  }
+
   Future<Map<String, dynamic>> _getGifs() async {
     http.Response response;
     if (_search == null) {
@@ -23,9 +30,49 @@ class _BuscardorPageState extends State<BuscardorPage> {
           "https://api.giphy.com/v1/gifs/trending?api_key=TyEPDvbAmwiB4AtPTjuFJ28Cy3eXyYRB&limit=20&offset=&rating=g&bundle=messaging_non_clips"));
     } else {
       response = await http.get(Uri.parse(
-          "https://api.giphy.com/v1/gifs/search?api_key=TyEPDvbAmwiB4AtPTjuFJ28Cy3eXyYRB&q=$_search&limit=20&offset=$_offset&rating=g&lang=pt&bundle=messaging_non_clips"));
+          "https://api.giphy.com/v1/gifs/search?api_key=TyEPDvbAmwiB4AtPTjuFJ28Cy3eXyYRB&q=$_search&limit=19&offset=$_offset&rating=g&lang=pt&bundle=messaging_non_clips"));
     }
     return jsonDecode(response.body);
+  }
+
+  Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot) {
+    return GridView.builder(
+      padding: EdgeInsets.all(10),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+      ),
+      itemCount: _getCount(snapshot.data["data"]),
+      itemBuilder: (context, index) {
+        if(_search == null || index < snapshot.data["data"].length) {
+          return GestureDetector(
+            child: Image.network(
+              snapshot.data['data'][index]['images']['fixed_height']['url'],
+              height: 300,
+              fit: BoxFit.cover,
+            ),
+          );
+        }else{
+          return Container(
+            child: GestureDetector(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.add,color: Colors.white,size: 70,),
+                  Text("Carregar mais...",style: TextStyle(color: Colors.white),)
+                ],
+              ),
+              onTap: (){
+                setState(() {
+                  _offset += 19;
+                });
+              },
+            ),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -48,18 +95,56 @@ class _BuscardorPageState extends State<BuscardorPage> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 24,),
-          TextField(
-            style: TextStyle(color: Colors.white,height: 2.5),
-            decoration: InputDecoration(
-                labelText: 'Pesquise aqui.',
-                labelStyle: TextStyle(color: Colors.white,fontSize: 25),
-                focusedBorder:OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)
-
-                )
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            child: TextField(
+              textAlign: TextAlign.center,
+              onSubmitted: (text){
+                setState(() {
+                  if(text.isNotEmpty){
+                    _search = text;
+                    _offset = 0;
+                  }
+                });
+                },
+              cursorColor: Colors.white,
+              style: TextStyle(
+                color: Colors.white,
+                height: 2.5,
+              ),
+              decoration: InputDecoration(
+                  labelText: 'Pesquise aqui.',
+                  labelStyle: TextStyle(color: Colors.white, fontSize: 25),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white)),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white))),
             ),
           ),
+          Expanded(
+              child: FutureBuilder(
+            future: _getGifs(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                case ConnectionState.none:
+                  return Container(
+                    width: 200,
+                    alignment: Alignment.center,
+                    height: 200,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 5.0,
+                    ),
+                  );
+                default:
+                  if (snapshot.hasError)
+                    return Container();
+                  else
+                    return _createGifTable(context, snapshot);
+              }
+            },
+          ))
         ],
       ),
     );
