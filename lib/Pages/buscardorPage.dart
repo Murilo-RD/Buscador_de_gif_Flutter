@@ -104,7 +104,7 @@ class _BuscardorPageState extends State<BuscardorPage> {
                   if(text.isNotEmpty){
                     _search = text;
                     _offset = 0;
-                  }
+                  }else _search = null;
                 });
                 },
               cursorColor: Colors.white,
