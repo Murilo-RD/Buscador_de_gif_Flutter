@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 
 void main(){
-  runApp(MaterialApp(home: Home(),debugShowCheckedModeBanner: false,));
+  runApp(MaterialApp(home: Home(),debugShowCheckedModeBanner: false,theme: ThemeData(hintColor: Colors.white),));
 }
 
 class Home extends StatelessWidget {
