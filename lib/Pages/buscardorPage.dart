@@ -5,6 +5,8 @@ import 'package:buscador_de_gif/Pages/gif_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:share_plus/share_plus.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class BuscardorPage extends StatefulWidget {
   const BuscardorPage({super.key});
@@ -17,11 +19,11 @@ class _BuscardorPageState extends State<BuscardorPage> {
   String? _search;
   int _offset = 0;
 
-
-  int _getCount(List data){
-    if(_search==null){
+  int _getCount(List data) {
+    if (_search == null) {
       return data.length;
-    }else return data.length+1;
+    } else
+      return data.length + 1;
   }
 
   Future<Map<String, dynamic>> _getGifs() async {
@@ -46,28 +48,46 @@ class _BuscardorPageState extends State<BuscardorPage> {
       ),
       itemCount: _getCount(snapshot.data["data"]),
       itemBuilder: (context, index) {
-        if(_search == null || index < snapshot.data["data"].length) {
+        if (_search == null || index < snapshot.data["data"].length) {
           return GestureDetector(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>GifPage(snapshot.data["data"][index]),));
-            },
-            child: Image.network(
-              snapshot.data["data"][index]["images"]["fixed_height"]["url"],
-              height: 300,
-              fit: BoxFit.cover,
-            ),
-          );
-        }else{
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          GifPage(snapshot.data["data"][index]),
+                    ));
+              },
+              onLongPress: () {
+                SharePlus.instance.share(ShareParams(
+                    text: snapshot.data["data"][index]["images"]["fixed_height"]
+                        ["url"]));
+              },
+              child: FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage ,
+                image: snapshot.data["data"][index]["images"]["fixed_height"]
+                    ["url"],
+                height: 300,
+                fit: BoxFit.cover,
+              ));
+        } else {
           return Container(
             child: GestureDetector(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Icon(Icons.add,color: Colors.white,size: 70,),
-                  Text("Carregar mais...",style: TextStyle(color: Colors.white),)
+                  Icon(
+                    Icons.add,
+                    color: Colors.white,
+                    size: 70,
+                  ),
+                  Text(
+                    "Carregar mais...",
+                    style: TextStyle(color: Colors.white),
+                  )
                 ],
               ),
-              onTap: (){
+              onTap: () {
                 setState(() {
                   _offset += 19;
                 });
@@ -103,14 +123,15 @@ class _BuscardorPageState extends State<BuscardorPage> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             child: TextField(
               textAlign: TextAlign.center,
-              onSubmitted: (text){
+              onSubmitted: (text) {
                 setState(() {
-                  if(text.isNotEmpty){
+                  if (text.isNotEmpty) {
                     _search = text;
                     _offset = 0;
-                  }else _search = null;
+                  } else
+                    _search = null;
                 });
-                },
+              },
               cursorColor: Colors.white,
               style: TextStyle(
                 color: Colors.white,
