@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'package:transparent_image/transparent_image.dart';
 
+
 class BuscardorPage extends StatefulWidget {
   const BuscardorPage({super.key});
 
